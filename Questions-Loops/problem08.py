@@ -1,0 +1,10 @@
+number = int(input("Enter your number: "))
+is_prime = True
+
+if number > 1:
+    for i in range(2, number):
+        if (number % i) == 0:
+            is_prime = False
+            break
+
+print ("The given number's status is", is_prime)
