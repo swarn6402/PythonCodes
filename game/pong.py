@@ -9,6 +9,14 @@ WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Simple Pong Game")
 
+# Initialize the font module
+pygame.font.init()
+font = pygame.font.Font(None, 36)
+
+# Initialize scores
+player_score = 0
+opponent_score = 0
+
 # Game clock for controlling the frame rate
 clock = pygame.time.Clock()
 
@@ -58,13 +66,22 @@ while True:
         player_rect.y -= paddle_speed
     if keys[pygame.K_DOWN] and player_rect.bottom < HEIGHT:
         player_rect.y += paddle_speed
-
-    # Simple AI for the opponent paddle: follows the ball's vertical position
-    if opponent_rect.centery < ball_rect.centery and opponent_rect.bottom < HEIGHT:
-        opponent_rect.y += paddle_speed
-    if opponent_rect.centery > ball_rect.centery and opponent_rect.top > 0:
-        opponent_rect.y -= paddle_speed
-
+    if ball_rect.left <= 0 or ball_rect.right >= WIDTH:
+        # Update scores
+        if ball_rect.left <= 0:
+            player_score += 1
+        else:
+            opponent_score += 1
+        # Reset the ball to the center
+        ball_rect.center = (WIDTH // 2, HEIGHT // 2)
+        # Reverse the ball's horizontal direction
+    pygame.draw.rect(screen, WHITE, opponent_rect)       # Draw the opponent paddle
+    pygame.draw.ellipse(screen, WHITE, ball_rect)        # Draw the ball
+    pygame.draw.aaline(screen, WHITE, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT))  # Draw the center line
+    
+    # Draw scores
+    score_text = font.render(f"{opponent_score} - {player_score}", True, WHITE)
+    screen.blit(score_text, (WIDTH//2 - 50, 30))
     # Check if the ball goes off the screen (i.e., a point is scored)
     if ball_rect.left <= 0 or ball_rect.right >= WIDTH:
         # Reset the ball to the center
